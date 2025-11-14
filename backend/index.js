@@ -4,6 +4,8 @@ import { connect } from "./config/database.js";
 import ticketRouter from "./routes/ticket.js";
 import loginRouter from "./routes/auth.js";
 import userRouter from "./routes/user.js";
+import cors from "cors";
+import doctorRouter from "./routes/doctor.js";
 
 const app = express();
 
