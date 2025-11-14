@@ -33,13 +33,13 @@ export default function NotificationBell() {
         <Bell className="w-6 h-6 text-gray-700" />
 
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white w-4 h-4 text-xs flex items-center justify-center rounded-full">
+          <span className="absolute -top-1 -right-1 bg-[#5b0f00] text-white w-4 h-4 text-xs flex items-center justify-center rounded-full">
             {unread}
           </span>
         )}
       </button>
 
-      {open && <NotificationList />}
+      {open && <NotificationList fetchTickets={fetchTickets} />}
     </div>
   );
 }

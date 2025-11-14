@@ -6,6 +6,7 @@ import loginRouter from "./routes/auth.js";
 import userRouter from "./routes/user.js";
 import cors from "cors";
 import doctorRouter from "./routes/doctor.js";
+import morgan from "morgan";
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/api/tickets", ticketRouter);

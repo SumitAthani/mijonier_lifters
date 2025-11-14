@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 export const getDoctorsByHospital = async (req, res) => {
     try {
         const { hospitalId } = req.params;
-        const { userId } = req.body;
+        const { userId } = req.query;
 
         if (!hospitalId) {
             return res.status(400).json({

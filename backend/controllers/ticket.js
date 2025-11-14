@@ -184,3 +184,35 @@ export const referTicketToAnotherDoctor = async (req, res) => {
         });
     }
 };
+
+export const updateStatus = async (req, res) => {
+    try {
+        const { ticketId } = req.params;
+        const { status } = req.body;
+
+        // Validate ticket
+        const ticket = await Ticket.findById(ticketId);
+        if (!ticket) {
+            return res.status(404).json({
+                success: false,
+                message: "Ticket not found"
+            });
+        }
+
+        // Update status
+        ticket.status = status;
+        await ticket.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Ticket successfully updated",
+            data: ticket
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};

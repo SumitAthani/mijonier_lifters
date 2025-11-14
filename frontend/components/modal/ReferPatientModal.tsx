@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getDoctorsByHospitalId } from "../../services/api/users/getDoctorsByHospitalId";
 import { useAtomValue } from "jotai";
@@ -8,7 +8,8 @@ import { userAtom } from "../../store/userAtom";
 import { createTicket } from "../../services/api/tickets/createTicket";
 
 type ReferPatientModalProps = {
-  userObj: any
+  userObj: any;
+  text?:string;
 };
 
 // {
@@ -51,7 +52,7 @@ type ReferPatientModalProps = {
 // }
 
 
-export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
+export default function ReferPatientModal({ userObj, text = "Refer" }: ReferPatientModalProps) {
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>();
   const user = useAtomValue(userAtom);
   const [message, setMessage] = useState("")
@@ -61,7 +62,7 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
     try {
       if (!hospitalId) return;
 
-      const data = await getDoctorsByHospitalId(hospitalId);
+      const data = await getDoctorsByHospitalId(hospitalId,user?._id);
       setDoctors(data.doctors)
       console.log("Doctors:", data);
     } catch (err) {
@@ -98,8 +99,8 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="px-4 py-2 bg-[#5b0f00] text-white rounded cursor-pointer hover:bg-[#981b02] transition">
-          Refer
+        <button className="px-4 py-2 bg-[#5b0f00] text-white rounded cursor-pointer hover:bg-[#981b02] transition flex items-center gap-2">
+          {text === "Decline" && <X className="w-4 h-4" />} {text}
         </button>
       </Dialog.Trigger>
 
@@ -128,6 +129,7 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Add a note or message…"
               className="w-full mt-1 border rounded px-3 py-2 h-24 resize-none outline-none focus:border-blue-500"
+              required
             />
           </div>
 
