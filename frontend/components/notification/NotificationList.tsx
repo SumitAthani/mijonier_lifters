@@ -24,13 +24,13 @@ export default function NotificationList() {
               <div className="flex gap-2">
                 <button
                   onClick={() => updateStatus({ id: n.id, status: "accepted" })}
-                  className="flex-1 flex items-center justify-center gap-1 bg-green-100 text-green-700 py-1 rounded-md"
+                  className="flex-1 flex items-center justify-center gap-1 bg-green-100 text-green-700 py-1 rounded-md cursor-pointer"
                 >
                   <Check className="w-4 h-4" /> Accept
                 </button>
                 <button
                   onClick={() => updateStatus({ id: n.id, status: "declined" })}
-                  className="flex-1 flex items-center justify-center gap-1 bg-red-100 text-red-700 py-1 rounded-md"
+                  className="flex-1 flex items-center justify-center gap-1 bg-red-100 text-red-700 py-1 rounded-md cursor-pointer"
                 >
                   <X className="w-4 h-4" /> Decline
                 </button>

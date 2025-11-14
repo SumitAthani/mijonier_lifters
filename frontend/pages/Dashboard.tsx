@@ -6,6 +6,7 @@ import { userRoleAtom } from "../store/userAtom";
 import NotificationBell from "../components/notification/NotificationBell";
 import { useEffect } from "react";
 import RoleSwitcher from "../components/role/RoleSwitcher";
+import ReferPatientModal from "../components/modal/ReferPatientModal";
 
 const dashboardStats = [
     { id: 1, title: "Total Departments", value: 12, icon: <Building2 className="w-10 h-10" /> },
@@ -136,10 +137,19 @@ export default function Dashboard() {
 
                         <ul className="flex flex-col gap-3">
                             {doctorPatients.map((d, idx) => (
-                                <li key={idx} className="p-4 bg-gray-50 rounded-lg flex justify-between">
-                                    <span>{d.patient}</span>
-                                    <span className="font-medium">{d.time}</span>
-                                </li>
+                            <li
+                                key={idx}
+                                className="p-4 bg-gray-50 rounded-lg flex justify-between items-center"
+                            >
+                                <span>{d.patient}</span>
+
+                                <div className="flex items-center gap-3">
+                                <span className="font-medium">{d.time}</span>
+
+                                {/* Refer Patient Modal */}
+                                <ReferPatientModal patientName={d.patient} />
+                                </div>
+                            </li>
                             ))}
                         </ul>
                     </div>
