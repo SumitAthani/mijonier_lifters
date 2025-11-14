@@ -1,13 +1,24 @@
-import { 
-    Home as HomeIcon,
-    LayoutDashboard as LayoutDashboardIcon
+import {
+  LogOut as LogoutIcon,
+  LayoutDashboard as LayoutDashboardIcon,
 } from "lucide-react";
-import Home from "../pages/Home";
+
 import Dashboard from "../pages/Dashboard";
+import Logout from "../pages/Logout";
 
 const routes = [
-  { label: "Home", icon: HomeIcon, component: Home, path: "/" },
-  { label: "Dashboard", icon: LayoutDashboardIcon, component: Dashboard, path: "/dashboard" },
+  {
+    label: "Dashboard",
+    icon: LayoutDashboardIcon,
+    component: Dashboard,
+    path: "/",
+  },
+  {
+    label: "Logout",
+    icon: LogoutIcon,
+    component: Logout,
+    path: "/logout",
+  },
 ];
 
 export { routes };

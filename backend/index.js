@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connect } from "./config/database.js";
 import ticketRouter from "./routes/ticket.js";
 import loginRouter from "./routes/auth.js";
+import cors from 'cors'
 
 const app = express();
 
@@ -11,6 +12,13 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 
 connect();
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 
 app.use(express.json());
 
