@@ -70,9 +70,6 @@ export const createTicket = async (req, res) => {
     }
 };
 
-import Ticket from "../models/ticket.model.js";
-import User from "../models/user.model.js";
-
 export const getTicketsByDoctor = async (req, res) => {
     try {
         const { doctorId } = req.params;
