@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { connect } from "./config/database.js";
+import ticketRouter from "./routes/ticket.js";
 
 const app = express();
 
@@ -11,6 +12,8 @@ const PORT = process.env.PORT || 8000;
 connect();
 
 app.use(express.json());
+
+app.use("/api/tickets", ticketRouter);
 
 
 app.get("/", (req, res) => {
