@@ -5,6 +5,53 @@ import { addNotificationAtom } from "../store/notificationAtoms";
 import { useEffect } from "react";
 import NotificationBell from "../components/notification/NotificationBell";
 
+const dashboardStats = [
+    {
+        id: 1,
+        title: "Total Departments",
+        value: 12,
+        icon: <Building2 className="w-10 h-10" />
+    },
+    {
+        id: 2,
+        title: "Active Patients",
+        value: 245,
+        icon: <User2 className="w-10 h-10" />
+    },
+    {
+        id: 3,
+        title: "Doctors On Duty",
+        value: 38,
+        icon: <Stethoscope className="w-10 h-10" />
+    },
+    {
+        id: 4,
+        title: "Today's Appointments",
+        value: 76,
+        icon: <CalendarDays className="w-10 h-10" />
+    }
+];
+
+const tableData = [
+    {
+        patient: "Rohan Mehta",
+        doctor: "Dr. Sharma",
+        department: "Cardiology",
+        time: "10:00 AM"
+    },
+    {
+        patient: "Sarah Khan",
+        doctor: "Dr. Patel",
+        department: "Neurology",
+        time: "10:45 AM"
+    },
+    {
+        patient: "Arjun Singh",
+        doctor: "Dr. Verma",
+        department: "Orthopedics",
+        time: "11:20 AM"
+    }
+];
 export default function Dashboard() {
     const addNotification = useSetAtom(addNotificationAtom);
 
@@ -37,45 +84,17 @@ export default function Dashboard() {
 
             {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="rounded-2xl shadow-sm border border-gray-200">
-                    <CardContent className="p-6 flex items-center gap-4">
-                        <Building2 className="w-10 h-10" />
-                        <div>
-                            <p className="text-sm text-gray-500">Total Departments</p>
-                            <p className="text-xl font-semibold">12</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl shadow-sm border border-gray-200">
-                    <CardContent className="p-6 flex items-center gap-4">
-                        <User2 className="w-10 h-10" />
-                        <div>
-                            <p className="text-sm text-gray-500">Active Patients</p>
-                            <p className="text-xl font-semibold">245</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl shadow-sm border border-gray-200">
-                    <CardContent className="p-6 flex items-center gap-4">
-                        <Stethoscope className="w-10 h-10" />
-                        <div>
-                            <p className="text-sm text-gray-500">Doctors On Duty</p>
-                            <p className="text-xl font-semibold">38</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl shadow-sm border border-gray-200">
-                    <CardContent className="p-6 flex items-center gap-4">
-                        <CalendarDays className="w-10 h-10" />
-                        <div>
-                            <p className="text-sm text-gray-500">Today's Appointments</p>
-                            <p className="text-xl font-semibold">76</p>
-                        </div>
-                    </CardContent>
-                </Card>
+                {dashboardStats.map(stat => (
+                    <Card key={stat.id} className="rounded-2xl shadow-sm border border-gray-200">
+                        <CardContent className="p-6 flex items-center gap-4">
+                            {stat.icon}
+                            <div>
+                                <p className="text-sm text-gray-500">{stat.title}</p>
+                                <p className="text-xl font-semibold">{stat.value}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
 
             {/* Table */}
@@ -91,24 +110,14 @@ export default function Dashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="border-b last:border-0">
-                            <td className="py-3">Rohan Mehta</td>
-                            <td>Dr. Sharma</td>
-                            <td>Cardiology</td>
-                            <td>10:00 AM</td>
-                        </tr>
-                        <tr className="border-b last:border-0">
-                            <td className="py-3">Sarah Khan</td>
-                            <td>Dr. Patel</td>
-                            <td>Neurology</td>
-                            <td>10:45 AM</td>
-                        </tr>
-                        <tr className="border-b last:border-0">
-                            <td className="py-3">Arjun Singh</td>
-                            <td>Dr. Verma</td>
-                            <td>Orthopedics</td>
-                            <td>11:20 AM</td>
-                        </tr>
+                        {tableData.map((appointment, index) => (
+                            <tr key={index} className="border-b last:border-0">
+                                <td className="py-3">{appointment.patient}</td>
+                                <td>{appointment.doctor}</td>
+                                <td>{appointment.department}</td>
+                                <td>{appointment.time}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
