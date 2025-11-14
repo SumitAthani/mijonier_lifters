@@ -11,6 +11,11 @@ const TicketSchema = new mongoose.Schema(
                 required: true,
             }
         ],
+        patient: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
 
         messages: [
             {
