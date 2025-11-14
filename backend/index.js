@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { connect } from "./config/database.js";
 import ticketRouter from "./routes/ticket.js";
 import loginRouter from "./routes/auth.js";
-import cors from 'cors'
+import userRouter from "./routes/user.js";
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use("/api/tickets", ticketRouter);
 app.use("/api/auth", loginRouter);
-
+app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => {
   return res.json({

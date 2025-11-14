@@ -1,4 +1,6 @@
 import User from "../models/user.model.js";
+import Doctor from "../models/doctor.model.js";
+import Hospital from "../models/hospital.model.js";
 
 export const loginUser = async (req, res) => {
     try {
@@ -12,7 +14,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Find user by email
+        // Find user
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -22,7 +24,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Since password is NOT hashed, compare directly
+        // Compare password (not hashed)
         if (user.password !== password) {
             return res.status(401).json({
                 success: false,
@@ -30,7 +32,18 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Login successful
+        let doctorDetails = null;
+        let hospitalDetails = null;
+
+        // ⭐ If user is DOCTOR → fetch doctor + hospital
+        if (user.role === "doctor") {
+            doctorDetails = await Doctor.findOne({ user: user._id });
+
+            if (doctorDetails) {
+                hospitalDetails = await Hospital.findById(doctorDetails.hospital);
+            }
+        }
+
         return res.status(200).json({
             success: true,
             message: "Login successful",
@@ -39,7 +52,8 @@ export const loginUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-            }
+                hospital: hospitalDetails?._id
+            },
         });
 
     } catch (error) {

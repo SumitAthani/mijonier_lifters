@@ -8,16 +8,16 @@ export const createTicket = async (req, res) => {
             return res.status(400).json({ success: false, message: "Title is required" });
         }
 
-        // if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "At least one userId is required"
-        //     });
-        // }
+        if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "At least one userId is required"
+            });
+        }
 
         const ticket = await Ticket.create({
             title,
-            // userIds,
+            userIds,
             messages: messages || [],
             status: status || "open",
         });
