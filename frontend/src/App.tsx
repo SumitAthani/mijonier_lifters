@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import Home from '../pages/Home'
-import Dashboard from '../pages/Dashboard'
+import { routes } from '../constants/routes'
 import Sidebar from '../ui/Sidebar'
 import NotFound from '../pages/NotFound'
 
@@ -14,8 +13,13 @@ function App() {
         {/* Main Content */}
         <div className="flex-1 bg-gray-50 p-6">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            {routes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<route.component/>}
+                />
+            ))}
             <Route
               path="*"
               element={<NotFound/>}

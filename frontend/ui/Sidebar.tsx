@@ -1,18 +1,13 @@
 import { NavLink } from "react-router-dom";
-import { Home, LayoutDashboard } from "lucide-react";
+import { routes } from "../constants/routes";
 
 export default function Sidebar() {
-  const menu = [
-    { label: "Home", icon: Home, path: "/" },
-    { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-  ];
-
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 py-6 px-4 flex flex-col shadow-sm">
       <h1 className="text-xl font-semibold mb-8 px-2">Hospital Admin</h1>
 
       <nav className="flex flex-col gap-2">
-        {menu.map((item) => (
+        {routes.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
