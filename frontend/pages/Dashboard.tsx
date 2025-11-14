@@ -2,11 +2,11 @@ import { useSetAtom, useAtom } from "jotai";
 import { Card, CardContent } from "../reusable/ui/Card";
 import { Building2, User2, Stethoscope, CalendarDays } from "lucide-react";
 import { addNotificationAtom } from "../store/notificationAtoms";
-import { userRoleAtom } from "../store/userAtom";
+import { userAtom } from "../store/userAtom";
 import NotificationBell from "../components/notification/NotificationBell";
-import { useEffect } from "react";
-import RoleSwitcher from "../components/role/RoleSwitcher";
+import { useEffect, useState } from "react";
 import ReferPatientModal from "../components/modal/ReferPatientModal";
+import { getPatientsService } from "../services/api/users/getUsersService";
 
 const dashboardStats = [
     { id: 1, title: "Total Departments", value: 12, icon: <Building2 className="w-10 h-10" /> },
@@ -17,8 +17,8 @@ const dashboardStats = [
 
 // Doctor Data
 const doctorStats = [
-    { id: 1, title: "Today's Patients", value: 18 },
-    { id: 2, title: "Pending Approvals", value: 3 },
+    { id: 1, title: "Today's Patients", value: 3 },
+    { id: 2, title: "Pending Approvals", value: 2 },
     { id: 3, title: "Completed Appointments", value: 9 }
 ];
 
@@ -33,12 +33,20 @@ const patientAppointments = [
     { doctor: "Dr. Sharma", department: "Cardiology", time: "10:00 AM", status: "Confirmed" }
 ];
 
+// {
+//   "_id": "6916f060e47325ff8206e5f1",
+//   "name": "jasi Kumar",
+//   "email": "jasi@gmail.com",
+//   "role": "user",
+//   "password": "123456"
+// }
+
 export default function Dashboard() {
     const addNotification = useSetAtom(addNotificationAtom);
-    const [role] = useAtom(userRoleAtom);
+    const [user] = useAtom(userAtom);
 
     useEffect(() => {
-        if (role === "doctor") {
+        if (user?.role === "doctor") {
             addNotification({
                 id: crypto.randomUUID(),
                 message: "New appointment request for 12:30 PM.",
@@ -47,28 +55,41 @@ export default function Dashboard() {
                 status: "pending"
             });
         }
-    }, [role]);
+    }, [user?.role]);
+
+    const [patients, setPatients] = useState<any>([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const data = await getPatientsService();
+                setPatients(data ?? []);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchUsers();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 text-gray-800">
             {/* Header */}
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-semibold tracking-tight">
-                    {role === "admin" && "Hospital Management Dashboard"}
-                    {role === "doctor" && "Doctor Dashboard"}
-                    {role === "patient" && "Your Appointments"}
+                    {user?.role === "admin" && "Hospital Management Dashboard"}
+                    {user?.role === "doctor" && "Doctor Dashboard"}
+                    {user?.role === "patient" && "Your Appointments"}
                 </h1>
 
                 <div className="flex items-center gap-4">
-                    <RoleSwitcher />
-
-                    {role === "doctor" && <NotificationBell />}
+                    {user?.role === "doctor" && <NotificationBell />}
                 </div>
             </header>
 
 
             {/* ===== ADMIN VIEW ===== */}
-            {role === "admin" && (
+            {user?.role === "admin" && (
                 <>
                     {/* Admin Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -117,7 +138,7 @@ export default function Dashboard() {
             )}
 
             {/* ===== DOCTOR VIEW ===== */}
-            {role === "doctor" && (
+            {user?.role === "doctor" && (
                 <>
                     {/* Doctor Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -136,18 +157,18 @@ export default function Dashboard() {
                         <h2 className="text-lg font-semibold mb-4">Today's Patients</h2>
 
                         <ul className="flex flex-col gap-3">
-                            {doctorPatients.map((d, idx) => (
+                            {patients.map((d, idx) => (
                             <li
                                 key={idx}
                                 className="p-4 bg-gray-50 rounded-lg flex justify-between items-center"
                             >
-                                <span>{d.patient}</span>
+                                <span>{d.name}</span>
 
                                 <div className="flex items-center gap-3">
-                                <span className="font-medium">{d.time}</span>
+                                {/* <span className="font-medium">{d.time}</span> */}
 
                                 {/* Refer Patient Modal */}
-                                <ReferPatientModal patientName={d.patient} />
+                                <ReferPatientModal userObj={d} />
                                 </div>
                             </li>
                             ))}
@@ -157,7 +178,7 @@ export default function Dashboard() {
             )}
 
             {/* ===== PATIENT VIEW ===== */}
-            {role === "patient" && (
+            {user?.role === "patient" && (
                 <div className="bg-white rounded-2xl shadow-sm border p-6">
                     <h2 className="text-lg font-semibold mb-4">Today's Appointment</h2>
 

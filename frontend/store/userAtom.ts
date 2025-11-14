@@ -1,12 +1,11 @@
 import { atom } from "jotai";
 
-export const userRoleAtom = atom<"admin" | "doctor" | "patient">("doctor");
-
 export type UserType = {
   _id: string;
   name: string;
   email: string;
   role: "admin" | "doctor" | "patient";
+  hospital_id: string;
 };
 
 const savedUser = localStorage.getItem("user");

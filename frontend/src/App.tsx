@@ -1,4 +1,5 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../constants/routes";
 import Sidebar from "../ui/Sidebar";
 import NotFound from "../pages/NotFound";
@@ -6,6 +7,11 @@ import Login from "../pages/Login";
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/login')
+  }, []);
 
   // Routes where sidebar should be hidden
   const hideSidebar = location.pathname === "/login";

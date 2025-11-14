@@ -4,10 +4,10 @@ import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 type ReferPatientModalProps = {
-  patientName: string;
+  userObj : any
 };
 
-export default function ReferPatientModal({ patientName }: ReferPatientModalProps) {
+export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>();
 
   return (
@@ -32,7 +32,7 @@ export default function ReferPatientModal({ patientName }: ReferPatientModalProp
           </Dialog.Title>
 
           <Dialog.Description className="mt-1 text-gray-600">
-            Refer <b>{patientName}</b> to another doctor.
+            Refer <b>{userObj.name}</b> to another doctor.
           </Dialog.Description>
 
           {/* ----- RADIX SELECT ----- */}
