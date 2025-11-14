@@ -1,33 +1,25 @@
 import express from "express";
-import cors from "cors";
+import dotenv from "dotenv";
+import { connect } from "./config/database.js";
 
 const app = express();
 
-// Middleware
-app.use(cors());
+dotenv.config();
+
+const PORT = process.env.PORT || 8000;
+
+connect();
+
 app.use(express.json());
 
-// Health Check
+
 app.get("/", (req, res) => {
-  res.send({ status: "OK", message: "Server is running 🚀" });
-});
-
-// Example Route
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from Express!" });
-});
-
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-  res.status(err.status || 500).json({
-    error: true,
-    message: err.message || "Internal Server Error",
+  return res.json({
+    success: true,
+    message: "Your server is up and running ...",
   });
 });
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`🔥 Server running on port ${PORT}`, "http://127.0.0.1:5000")
-);
+app.listen(PORT, () => {
+  console.log(`App is listening at ${PORT}`);
+});
