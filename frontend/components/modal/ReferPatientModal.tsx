@@ -1,14 +1,75 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getDoctorsByHospitalId } from "../../services/api/users/getDoctorsByHospitalId";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../store/userAtom";
 
 type ReferPatientModalProps = {
   userObj : any
 };
 
+// {
+//   "success": true,
+//   "count": 2,
+//   "doctors": [
+//     {
+//       "_id": "6916fea9e47325ff8206e5fa",
+//       "user": {
+//         "_id": "6916ef8de47325ff8206e5ef",
+//         "name": "Dr. Nikhil Mehta",
+//         "email": "nikhil@gmail.com",
+//         "role": "doctor"
+//       },
+//       "specialization": "Cardiologist",
+//       "experience": 5,
+//       "qualification": "MBBS, MD",
+//       "hospital": {
+//         "_id": "6916fd8fe47325ff8206e5f6",
+//         "name": "City Hospital"
+//       }
+//     },
+//     {
+//       "_id": "6916ffafe47325ff8206e60f",
+//       "user": {
+//         "_id": "6916f008e47325ff8206e5f0",
+//         "name": "Dr. sumit Shah",
+//         "email": "sumit@gmail.com",
+//         "role": "doctor"
+//       },
+//       "specialization": "Cardiologist",
+//       "experience": 10,
+//       "qualification": "MBBS, MD",
+//       "hospital": {
+//         "_id": "6916fd8fe47325ff8206e5f6",
+//         "name": "City Hospital"
+//       }
+//     }
+//   ]
+// }
+
+
 export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>();
+  const user = useAtomValue(userAtom);
+
+  const [doctors,setDoctors] = useState([])
+  const loadDoctors = async (hospitalId: string) => {
+    try {
+      if (!hospitalId) return;
+
+      const data = await getDoctorsByHospitalId(hospitalId);
+      setDoctors(data.doctors)
+      console.log("Doctors:", data);
+    } catch (err) {
+      console.error("Error fetching doctors:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadDoctors(user?.hospital)
+  }, [])
 
   return (
     <Dialog.Root>
@@ -47,35 +108,19 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
             <Select.Portal>
               <Select.Content className="bg-white border rounded shadow-md z-[9999]">
                 <Select.Viewport className="p-1">
-                  <Select.Item
-                    value="1"
-                    className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
-                  >
-                    <Select.ItemText>Dr. Priya Sharma</Select.ItemText>
-                    <Select.ItemIndicator>
-                      <Check className="w-4 h-4 text-blue-600" />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-
-                  <Select.Item
-                    value="2"
-                    className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
-                  >
-                    <Select.ItemText>Dr. Rahul Menon</Select.ItemText>
-                    <Select.ItemIndicator>
-                      <Check className="w-4 h-4 text-blue-600" />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-
-                  <Select.Item
-                    value="3"
-                    className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
-                  >
-                    <Select.ItemText>Dr. Anita Kapoor</Select.ItemText>
-                    <Select.ItemIndicator>
-                      <Check className="w-4 h-4 text-blue-600" />
-                    </Select.ItemIndicator>
-                  </Select.Item>
+                  {
+                    doctors.map((doctor) => (
+                      <Select.Item
+                        value={doctor.user._id}
+                        className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
+                      >
+                        <Select.ItemText>{doctor.user.name}</Select.ItemText>
+                        <Select.ItemIndicator>
+                          <Check className="w-4 h-4 text-blue-600" />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    ))
+                  }
                 </Select.Viewport>
               </Select.Content>
             </Select.Portal>

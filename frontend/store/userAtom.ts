@@ -5,7 +5,7 @@ export type UserType = {
   name: string;
   email: string;
   role: "admin" | "doctor" | "patient";
-  hospital_id: string;
+  hospital: string;
 };
 
 const savedUser = localStorage.getItem("user");
