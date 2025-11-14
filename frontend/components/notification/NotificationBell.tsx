@@ -1,15 +1,29 @@
 import { Bell } from "lucide-react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { notificationsAtom } from "../../store/notificationAtoms";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NotificationList from "./NotificationList";
+import { getTicketsByDoctor } from "../../services/api/tickets/getTicketsByDoctor";
+import { userAtom } from "../../store/userAtom";
 
 export default function NotificationBell() {
-  const [notifications] = useAtom(notificationsAtom);
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
   const [open, setOpen] = useState(false);
 
-  const unread = notifications.filter(n => n.status === "pending").length;
+  const user = useAtomValue(userAtom);
 
+  const unread = notifications.filter(n => n.status === "open").length;
+
+  const fetchTickets = async () => {
+    const data = await getTicketsByDoctor(user?._id);
+    console.log("data",data);
+    setNotifications(data);
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, [])
+  
   return (
     <div className="relative">
       <button

@@ -1,12 +1,14 @@
 import { useSetAtom, useAtom } from "jotai";
 import { Card, CardContent } from "../reusable/ui/Card";
-import { Building2, User2, Stethoscope, CalendarDays } from "lucide-react";
-import { addNotificationAtom } from "../store/notificationAtoms";
+import { Building2, User2, Stethoscope, CalendarDays, RefreshCcw } from "lucide-react";
+// import { addNotificationAtom } from "../store/notificationAtoms";
 import { userAtom } from "../store/userAtom";
 import NotificationBell from "../components/notification/NotificationBell";
 import { useEffect, useState } from "react";
 import ReferPatientModal from "../components/modal/ReferPatientModal";
 import { getPatientsService } from "../services/api/users/getUsersService";
+import { getTicketsByDoctor } from "../services/api/tickets/getTicketsByDoctor";
+import { notificationsAtom } from "../store/notificationAtoms";
 
 const dashboardStats = [
     { id: 1, title: "Total Departments", value: 12, icon: <Building2 className="w-10 h-10" /> },
@@ -42,20 +44,18 @@ const patientAppointments = [
 // }
 
 export default function Dashboard() {
-    const addNotification = useSetAtom(addNotificationAtom);
+    // const addNotification = useSetAtom(addNotificationAtom);
     const [user] = useAtom(userAtom);
+    const [spin, setSpin] = useState(false);
+    const [notifications, setNotifications] = useAtom(notificationsAtom);
 
-    useEffect(() => {
-        if (user?.role === "doctor") {
-            addNotification({
-                id: crypto.randomUUID(),
-                message: "New appointment request for 12:30 PM.",
-                type: "appointment",
-                createdAt: new Date().toISOString(),
-                status: "pending"
-            });
-        }
-    }, [user?.role]);
+    const fetchTickets = async () => {
+        setSpin(true);
+        const data = await getTicketsByDoctor(user?._id);
+        console.log("data",data);
+        setTimeout(() => setSpin(false), 500); // stop after animation
+        setNotifications(data);
+    };
 
     const [patients, setPatients] = useState<any>([]);
 
@@ -78,11 +78,15 @@ export default function Dashboard() {
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-semibold tracking-tight">
                     {user?.role === "admin" && "Hospital Management Dashboard"}
-                    {user?.role === "doctor" && "Doctor Dashboard"}
+                    {user?.role === "doctor" && `Hi, ${user.name}`}
                     {user?.role === "patient" && "Your Appointments"}
                 </h1>
 
                 <div className="flex items-center gap-4">
+                    <RefreshCcw
+                        onClick={fetchTickets}
+                        className={`cursor-pointer transition-transform duration-500 ${spin ? "animate-spin" : ""}`}
+                    />
                     {user?.role === "doctor" && <NotificationBell />}
                 </div>
             </header>

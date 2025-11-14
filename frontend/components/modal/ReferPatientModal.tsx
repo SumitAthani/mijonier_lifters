@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { getDoctorsByHospitalId } from "../../services/api/users/getDoctorsByHospitalId";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../store/userAtom";
+import { createTicket } from "../../services/api/tickets/createTicket";
 
 type ReferPatientModalProps = {
-  userObj : any
+  userObj: any
 };
 
 // {
@@ -53,8 +54,9 @@ type ReferPatientModalProps = {
 export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>();
   const user = useAtomValue(userAtom);
+  const [message, setMessage] = useState("")
 
-  const [doctors,setDoctors] = useState([])
+  const [doctors, setDoctors] = useState([])
   const loadDoctors = async (hospitalId: string) => {
     try {
       if (!hospitalId) return;
@@ -66,6 +68,28 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
       console.error("Error fetching doctors:", err);
     }
   };
+  const startTicket = async () => {
+    try {
+      const ticket = await createTicket({
+        title: "Patient Refferred by " + user?.name,
+        patient: userObj._id,
+        userIds: [
+          user?._id,
+          selectedDoctor
+        ],
+        messages: [
+          {
+            text: message,
+            sentBy: user?._id
+          }
+        ],
+      });
+      console.log("Created:", ticket);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  console.log("selectedDoctor:", selectedDoctor)
 
   useEffect(() => {
     loadDoctors(user?.hospital)
@@ -74,7 +98,7 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-[#5b0f00] text-white rounded cursor-pointer hover:bg-[#981b02] transition">
           Refer
         </button>
       </Dialog.Trigger>
@@ -86,7 +110,7 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
         {/* ---- CONTENT ---- */}
         <Dialog.Content
           className="fixed bg-white rounded-xl p-6 shadow-xl w-[90%] max-w-md
-                     top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         >
           <Dialog.Title className="text-xl font-semibold">
             Refer Patient
@@ -95,6 +119,17 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
           <Dialog.Description className="mt-1 text-gray-600">
             Refer <b>{userObj.name}</b> to another doctor.
           </Dialog.Description>
+
+          {/* ---- MESSAGE INPUT ---- */}
+          <div className="mt-4">
+            <label className="text-sm font-medium">Message</label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Add a note or message…"
+              className="w-full mt-1 border rounded px-3 py-2 h-24 resize-none outline-none focus:border-blue-500"
+            />
+          </div>
 
           {/* ----- RADIX SELECT ----- */}
           <Select.Root value={selectedDoctor} onValueChange={setSelectedDoctor}>
@@ -108,19 +143,18 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
             <Select.Portal>
               <Select.Content className="bg-white border rounded shadow-md z-[9999]">
                 <Select.Viewport className="p-1">
-                  {
-                    doctors.map((doctor) => (
-                      <Select.Item
-                        value={doctor.user._id}
-                        className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        <Select.ItemText>{doctor.user.name}</Select.ItemText>
-                        <Select.ItemIndicator>
-                          <Check className="w-4 h-4 text-blue-600" />
-                        </Select.ItemIndicator>
-                      </Select.Item>
-                    ))
-                  }
+                  {doctors.map((doctor) => (
+                    <Select.Item
+                      key={doctor.user._id}
+                      value={doctor.user._id}
+                      className="px-3 py-2 rounded flex items-center gap-2 cursor-pointer hover:bg-gray-100"
+                    >
+                      <Select.ItemText>{doctor.user.name}</Select.ItemText>
+                      <Select.ItemIndicator>
+                        <Check className="w-4 h-4 text-blue-600" />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  ))}
                 </Select.Viewport>
               </Select.Content>
             </Select.Portal>
@@ -129,8 +163,9 @@ export default function ReferPatientModal({ userObj }: ReferPatientModalProps) {
           {/* ---- BUTTON ---- */}
           <Dialog.Close asChild>
             <button
-              className="w-full bg-blue-600 text-white mt-6 py-2 rounded font-medium disabled:opacity-40 cursor-pointer"
+              className="w-full bg-[#5b0f00] text-white mt-6 py-2 rounded font-medium disabled:opacity-40 cursor-pointer"
               disabled={!selectedDoctor}
+              onClick={startTicket}
             >
               Confirm
             </button>
