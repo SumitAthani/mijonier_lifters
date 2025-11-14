@@ -1,0 +1,46 @@
+.report-container {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.report-details p,
+.report-details h4 {
+  margin: 0.75rem 0;
+}
+
+.report-details strong {
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.severity-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.severity-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #eee;
+}
+
+.severity-label {
+  font-weight: bold;
+}
+
+.severity-label.red { color: #d9534f; }
+.severity-label.yellow { color: #f0ad4e; }
+.severity-label.green { color: #5cb85c; }
+
+.severity-count {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
