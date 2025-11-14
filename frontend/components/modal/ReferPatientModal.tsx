@@ -6,10 +6,12 @@ import { getDoctorsByHospitalId } from "../../services/api/users/getDoctorsByHos
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../store/userAtom";
 import { createTicket } from "../../services/api/tickets/createTicket";
+import { updateTicketData } from "../../services/api/tickets/updateTicketData";
 
 type ReferPatientModalProps = {
   userObj: any;
   text?:string;
+  setOpen?: any;
 };
 
 // {
@@ -52,7 +54,7 @@ type ReferPatientModalProps = {
 // }
 
 
-export default function ReferPatientModal({ userObj, text = "Refer" }: ReferPatientModalProps) {
+export default function ReferPatientModal({ userObj, text = "Refer", setOpen }: ReferPatientModalProps) {
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>();
   const user = useAtomValue(userAtom);
   const [message, setMessage] = useState("")
@@ -92,6 +94,25 @@ export default function ReferPatientModal({ userObj, text = "Refer" }: ReferPati
   };
   console.log("selectedDoctor:", selectedDoctor)
 
+  const declineTicket = async () => {
+    try {
+      const updated = await updateTicketData(userObj._id, {
+        status: "declined",
+        messages: [
+          {
+            text: message,
+            sentBy: user?._id
+          }
+        ],
+        sentBy: user?._id
+      })
+      setOpen(false);
+      console.log("updated",updated)
+    } catch (error) {
+      console.error("error:",error)
+    }
+
+  }
   useEffect(() => {
     loadDoctors(user?.hospital)
   }, [])
@@ -114,12 +135,14 @@ export default function ReferPatientModal({ userObj, text = "Refer" }: ReferPati
                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         >
           <Dialog.Title className="text-xl font-semibold">
-            Refer Patient
+            {text === "Decline" ? "Decline" : "Refer"} Patient
           </Dialog.Title>
 
-          <Dialog.Description className="mt-1 text-gray-600">
-            Refer <b>{userObj.name}</b> to another doctor.
-          </Dialog.Description>
+          {text === "Decline" && (
+            <Dialog.Description className="mt-1 text-gray-600">
+              Refer <b>{userObj.name}</b> to another doctor.
+            </Dialog.Description>
+          )}
 
           {/* ---- MESSAGE INPUT ---- */}
           <div className="mt-4">
@@ -167,7 +190,9 @@ export default function ReferPatientModal({ userObj, text = "Refer" }: ReferPati
             <button
               className="w-full bg-[#5b0f00] text-white mt-6 py-2 rounded font-medium disabled:opacity-40 cursor-pointer"
               disabled={!selectedDoctor}
-              onClick={startTicket}
+              onClick={() => {
+                text === "Decline" ? declineTicket() : startTicket()
+              }}
             >
               Confirm
             </button>

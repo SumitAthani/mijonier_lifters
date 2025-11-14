@@ -5,7 +5,8 @@ import { updateTicketService } from "../../services/api/tickets/updateTicket";
 import ReferPatientModal from "../modal/ReferPatientModal";
 import { userAtom } from "../../store/userAtom";
 
-export default function NotificationList({ fetchTickets }:{ fetchTickets: () => void }) {
+export default function NotificationList({ fetchTickets, setOpen }:{ 
+  fetchTickets: () => void, setOpen : () => void }) {
   const [notifications] = useAtom(notificationsAtom);
 
   const user = useAtomValue(userAtom);
@@ -32,9 +33,12 @@ export default function NotificationList({ fetchTickets }:{ fetchTickets: () => 
             key={n._id}
             className="p-3 rounded-lg border bg-gray-50 flex flex-col gap-2"
           >
-            <p className="text-sm text-gray-700">{n.title}</p>
-
-            {n.status === "open" ? (
+            <p className="text-sm text-gray-700">
+              {n.userIds[0]._id === user?._id ? ("Referred Patient: " + n.patient.name + " to " + n.userIds[1].name) : n.title}
+            </p>
+            {n.userIds[0]._id !== user?._id && (
+              
+            n.status === "open" ? (
               <div className="flex gap-2">
                 <button
                   onClick={() => acceptTicket(n._id)}
@@ -48,7 +52,7 @@ export default function NotificationList({ fetchTickets }:{ fetchTickets: () => 
                 >
                   <X className="w-4 h-4" /> Decline
                 </button> */}
-                <ReferPatientModal text="Decline" userObj={user} />
+                <ReferPatientModal text="Decline" userObj={user} setOpen={setOpen} />
               </div>
             ) : (
               <p
@@ -58,7 +62,9 @@ export default function NotificationList({ fetchTickets }:{ fetchTickets: () => 
               >
                 {n.status.charAt(0).toUpperCase() + n.status.slice(1)}
               </p>
+            )
             )}
+
           </div>
         ))}
       </div>
