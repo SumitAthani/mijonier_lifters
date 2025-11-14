@@ -24,6 +24,13 @@ const TicketSchema = new mongoose.Schema(
                 sentAt: { type: Date, default: Date.now }
             }
         ],
+        referredDoctors: [
+            {
+                doctorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+                referredAt: { type: Date, default: Date.now }
+            }
+        ],
+        creatorDoctor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
         status: {
             type: String,
