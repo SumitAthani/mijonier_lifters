@@ -69,3 +69,40 @@ export const createTicket = async (req, res) => {
         });
     }
 };
+
+import Ticket from "../models/ticket.model.js";
+import User from "../models/user.model.js";
+
+export const getTicketsByDoctor = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+
+        // Validate doctor
+        const doctor = await User.findById(doctorId);
+
+        if (!doctor || doctor.role !== "doctor") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid doctor ID"
+            });
+        }
+
+        // Find tickets where doctor is assigned
+        const tickets = await Ticket.find({ userIds: doctorId })
+            .populate("patient", "name email")
+            .populate("userIds", "name email role")
+            .populate("messages.sentBy", "name email");
+
+        return res.status(200).json({
+            success: true,
+            count: tickets.length,
+            data: tickets
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
