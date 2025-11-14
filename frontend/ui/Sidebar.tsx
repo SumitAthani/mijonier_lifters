@@ -4,7 +4,7 @@ import { routes } from "../constants/routes";
 export default function Sidebar() {
   return (
     <div className="h-screen w-64 bg-white border-r border-gray-200 py-6 px-4 flex flex-col shadow-sm">
-      <h1 className="text-xl font-semibold mb-8 px-2">Hospital Admin</h1>
+      <h1 className="text-xl font-semibold mb-8 px-2">Nigran</h1>
 
       <nav className="flex flex-col gap-2">
         {routes.map((item) => (
