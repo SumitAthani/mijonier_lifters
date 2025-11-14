@@ -25,6 +25,7 @@ app.use(express.json());
 app.use("/api/tickets", ticketRouter);
 app.use("/api/auth", loginRouter);
 app.use("/api/users", userRouter);
+app.use("/api/doctors", doctorRouter);
 
 app.get("/", (req, res) => {
   return res.json({
