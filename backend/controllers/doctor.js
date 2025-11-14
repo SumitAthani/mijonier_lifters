@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 export const getDoctorsByHospital = async (req, res) => {
     try {
         const { hospitalId } = req.params;
+        const { userId } = req.body;
 
         if (!hospitalId) {
             return res.status(400).json({
@@ -13,7 +14,10 @@ export const getDoctorsByHospital = async (req, res) => {
         }
 
 
-        const doctors = await Doctor.find({ hospital: hospitalId })
+        const doctors = await Doctor.find({
+            hospital: hospitalId,
+            user: { $ne: userId }
+        })
             .populate("user", "name email role")
             .populate("hospital", "name");
 
